@@ -1,0 +1,45 @@
+*-e
+.DS_Store
+.idea
+*.idea
+*.vscode
+*.txt
+
+*.__pycache__
+# output dir
+outputs
+
+# compilation and distribution
+__pycache__
+*.egg
+*.egg-info
+_ext
+*.pyc
+*.so
+build/
+dist/
+wheels/
+cocoapi*
+panopticapi*
+
+# pytorch/python/numpy formats
+*.pth
+*.pkl
+*.npy
+*.zip
+*.tar
+
+# ipython/jupyter notebooks
+*.ipynb
+**/.ipynb_checkpoints/
+
+# Editor temporaries
+*.swn
+*.swo
+*.swp
+*~
+
+*.pickle
+docs/_build/
+
+exp/*
