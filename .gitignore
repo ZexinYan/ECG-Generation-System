@@ -4,7 +4,7 @@
 *.idea
 *.vscode
 *.txt
-
+*.csv
 *.__pycache__
 # output dir
 outputs

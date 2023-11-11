@@ -3,17 +3,16 @@ from bson.objectid import ObjectId
 from hsg.database.constant import DataBaseConstant
 
 
-class UserTable:
+class CSVTable:
     _client = None
     _table = None
 
     @staticmethod
     def table():
-        if UserTable._table is None:
-            UserTable._client = pymongo.MongoClient("mongodb://localhost:27017/")
-            UserTable._table = UserTable._client[DataBaseConstant.DATABASE_NAME][DataBaseConstant.USER_TABLE]
-            UserTable._table.create_index('email', unique=True)
-        return UserTable._table
+        if CSVTable._table is None:
+            CSVTable._client = pymongo.MongoClient("mongodb://localhost:27017/")
+            CSVTable._table = CSVTable._client[DataBaseConstant.DATABASE_NAME][DataBaseConstant.CSV_TABLE]
+        return CSVTable._table
 
     def find(self, condition=None):
         users_list = []
@@ -41,14 +40,3 @@ class UserTable:
     def delete_one(self, _id):
         table = self.table()
         return table.delete_one({"_id": ObjectId(_id)})
-
-
-if __name__ == '__main__':
-    user_table = UserTable.table()
-    insert_id = user_table.insert_one({
-        'username': "zexiny",
-        'password': "12344",
-        'phone': "6693386680",
-        'email': "zexiny@andrew.cmu.edu"
-    })
-    print(f'insert_id: {insert_id}')
