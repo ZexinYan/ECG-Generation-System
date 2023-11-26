@@ -1,4 +1,6 @@
 {
-  "host": "localhost",
-  "port": 11000
+  "HOST": "localhost",
+  "PORT": 11000,
+  "REDIS_HOST": "localhost",
+  "REDIS_PORT": 10088
 }

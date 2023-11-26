@@ -1,0 +1,282 @@
+{% extends '_base.html' %}
+{% from '_macro.html' import alert, badge %}
+
+{% block css_block %}
+<link rel="stylesheet" href="{{ url_for('static', filename='/vendor/bootstrap-select.min.css') }}">
+<link href="{{ url_for('static', filename='/vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='/vendor/datatables/searchPanes.dataTables.min.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='/vendor/datatables/select.dataTables.min.css') }}" rel="stylesheet">
+{% endblock css_block %}
+
+{% block content_block %}
+<main>
+    <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+        <div class="container-xxxl px-4">
+            <div class="page-header-content pt-4">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-auto mt-4">
+                        <h1 class="page-header-title">
+                            <div class="page-header-icon"><i data-feather="activity"></i></div>
+                            Heartbeat Signal Sequence
+                        </h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Main page content-->
+    <div class="container-xxxl px-4 mt-n10">
+        <div class="row">
+            <div class="col">
+                <!-- Basic Card-->
+                <div class="card mb-4">
+                    <div class="card-header">Details</div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            Upload Time：{{ info['upload_time'] }}
+                        </div>
+                        <hr>
+                        <div class="mb-3">
+                            Description：{{ info['comment'] }}
+                        </div>
+                        <hr>
+                        <button class="btn btn-outline-primary" id="generated_btn">
+                            Generated Sequences
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <!-- Basic Card-->
+                <div class="card mb-4">
+                    <div class="card-header">Prompt Sequence</div>
+                    <div class="card-body">
+                        <div class="chart-area pt-0 pb-0">
+                            <canvas id="promptChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card shadow mb-4">
+            <div class="card-header py-3  d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Generated Sequences</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+{% endblock content_block %}
+
+{% block modal_block %}
+{% endblock modal_block %}
+
+{% block page_plugins_block %}
+<script src="{{ url_for('static', filename='/vendor/datatables/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='/vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+<script src="{{ url_for('static', filename='/vendor/datatables/dataTables.searchPanes.min.js') }}"></script>
+<script src="{{ url_for('static', filename='/vendor/datatables/dataTables.select.min.js') }}"></script>
+<script src="{{ url_for('static', filename='/vendor/bootstrap-select.min.js') }}"></script>
+
+
+<script src="{{ url_for('static', filename='/vendor/marked.min.js') }}"></script>
+<script src="{{ url_for('static', filename='/vendor/chart.js') }}"></script>
+<script src="{{ url_for('static', filename='/vendor/color.js') }}"></script>
+<script src="{{ url_for('static', filename='/js/moment.js') }}"></script>
+
+<script src="{{ url_for('static', filename='/vendor/bootstrap-select.js') }}"></script>
+
+
+{% endblock page_plugins_block %}
+
+{% block custom_js_block %}
+
+<script>
+    // Area Chart Example
+    var prompt_sequence = {{ prompt_sequence }};
+    var labels = {{ labels }};
+
+    var ctx = document.getElementById("promptChart");
+    var myLineChart = new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: labels,
+            datasets: [{
+                label: "Heartbeat Rate",
+                lineTension: 0.3,
+                backgroundColor: "rgba(0, 97, 242, 0.05)",
+                borderColor: "rgba(0, 97, 242, 1)",
+                pointRadius: 3,
+                pointBackgroundColor: "rgba(0, 97, 242, 1)",
+                pointBorderColor: "rgba(0, 97, 242, 1)",
+                pointHoverRadius: 3,
+                pointHoverBackgroundColor: "rgba(0, 97, 242, 1)",
+                pointHoverBorderColor: "rgba(0, 97, 242, 1)",
+                pointHitRadius: 10,
+                pointBorderWidth: 2,
+                data: prompt_sequence
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            layout: {
+                padding: {
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    bottom: 0
+                }
+            },
+            legend: {
+                display: false
+            }
+        }
+    });
+</script>
+
+
+<script>
+
+    $('#generated_btn').click(function () {
+        $.ajax({
+            url: '/generated_sequence',
+            data: JSON.stringify({
+                'prompt_id': "{{ info['_id'] }}"
+            }),
+            type: 'POST',
+            contentType: 'application/json',
+            async: false,
+            cache: false,
+            processData: false,
+            success: function (result) {
+                swal('Please wait for a moment...', {
+                    icon: 'success'
+                }).then(() => {
+                    window.location.href = '/prompt/detail/{{ info["_id"] }}';
+                })
+            },
+            error: function (result) {
+                swal(result.responseText, {
+                    icon: "error",
+                }).then(() => {
+                    remove_disabled();
+                    resolve(false);
+                });
+            }
+        })
+    });
+</script>
+
+<script>
+    generated_sequences = {}
+    $(document).ready(function () {
+        init_table_config()
+        update_table()
+    })
+
+    function init_table_config() {
+        var table = $('#dataTable').DataTable({
+            order: [[0, "desc"]],
+            columns: [
+                {
+                    title: 'correlation score',
+                    data: 'score',
+                    width: '20%'
+                },
+                {
+                    'title': 'Sequence',
+                    render: function (data, type, row) {
+                        var chartId = 'generated-chart-' + row._id;
+                        var chart_container = `<div class="chart-area pt-0 pb-0">
+                            <canvas id="${chartId}"></canvas>
+                        </div>`
+                        return chart_container;
+                    },
+                    width: '80%'
+                },
+            ],
+            "drawCallback": function (settings) {
+                setTimeout(renderCharts, 0);
+            },
+            dom: 'Plfrtip',
+            displayLength: 3
+        });
+    }
+
+    function update_table() {
+        $.ajax({
+            url: `/generated_sequence/{{info['_id']}}`,
+            type: 'get',
+            dataType: 'json',
+            success: function (result) {
+                result = result['message']['sequences']
+                let table = $('#dataTable').dataTable();
+                let oSettings = table.fnSettings();
+                table.fnClearTable(this);
+                for (var i = 0; i < result.length; i++) {
+                    table.oApi._fnAddData(oSettings, result[i]);
+                    generated_sequences[`generated-chart-${result[i]['_id']}`] = result[i]['sequence']
+                }
+                oSettings.aiDisplay = oSettings.aiDisplayMaster.slice();
+                table.api().searchPanes.rebuildPane();
+            }
+        })
+    }
+
+    function renderCharts() {
+        // Find all chart containers
+        var chartContainers = $('canvas[id^="generated-chart-"]');
+
+        // Iterate over each chart container
+        chartContainers.each(function () {
+            var chartId = $(this).attr('id');
+            var ctx = document.getElementById(chartId);
+            console.log(chartId)
+            var new_chart = new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: "Heartbeat Rate",
+                        lineTension: 0.3,
+                        backgroundColor: "rgba(0, 97, 242, 0.05)",
+                        borderColor: "rgba(0, 97, 242, 1)",
+                        pointRadius: 3,
+                        pointBackgroundColor: "rgba(0, 97, 242, 1)",
+                        pointBorderColor: "rgba(0, 97, 242, 1)",
+                        pointHoverRadius: 3,
+                        pointHoverBackgroundColor: "rgba(0, 97, 242, 1)",
+                        pointHoverBorderColor: "rgba(0, 97, 242, 1)",
+                        pointHitRadius: 10,
+                        pointBorderWidth: 2,
+                        data: generated_sequences[chartId]
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            left: 0,
+                            right: 0,
+                            top: 0,
+                            bottom: 0
+                        }
+                    },
+                    legend: {
+                        display: false
+                    }
+                }
+            });
+        });
+    }
+</script>
+
+{% endblock custom_js_block %}

@@ -1,0 +1,77 @@
+{% macro alert(type, message) %}
+    <div class="alert alert-{{ type }} alert-dismissible fade show" role="alert">
+        <strong>{{ message }}</strong>
+        <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+{% endmacro %}
+
+{% macro badge(type, message) %}
+    <div class='badge bg-{{ type }} text-white rounded-pill'>{{ message }}</div>
+{% endmacro %}
+
+{% macro badge_soft(type, message) %}
+    <div class='badge bg-{{ type }}-soft text-{{ type }}'>{{ message }}</div>
+{% endmacro %}
+
+{% macro progress(type, left_msg, right_msg, progress) %}
+    <h4 class="small font-weight-bold">{{ left_msg }}
+        <span class="float-right">{{ right_msg }}</span>
+    </h4>
+    <div class="progress">
+        <div class="progress-bar bg-{{ type }}" role="progressbar"
+             style="width: {{ progress }}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+{% endmacro %}
+
+
+{% macro collapsable_card(card_id, card_info_id, card_header, card_body) %}
+    <div class="card mb-4 card-collapsable" id="{{ card_id }}">
+        <a class="card-header" href="#{{ card_info_id }}" data-bs-toggle="collapse" role="button"
+           aria-expanded="true" aria-controls="{{ card_info_id }}">{{ card_header }}
+            <div class="card-collapsable-arrow">"<i class="fas fa-chevron-down"></i></div>
+        </a>
+        <div class="collapse show" id="{{ card_info_id }}">
+            <div class="card-body">
+                {{ card_body }}
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+
+{% macro progress(type, status, progress) %}
+    <h4 class="small font-weight-bold">{{ status }}<span
+            class="float-right">{{ progress }}%</span></h4>
+    <div class="progress">
+        <div class="progress-bar bg-{{ type }}"
+             role="progressbar" style="width: {{ progress }}%;"
+             aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+
+{% endmacro %}
+
+{% macro hyperparameter_block(type, name, value, default, desc, id_prefix) %}
+    {% if type == 'choice' %}
+        <label data-bs-toggle="tooltip" data-bs-placement="right">
+            {{ desc }}
+        </label>
+        <br>
+        <select class="selectpicker" id="{{ id_prefix }}_{{ type }}_{{ name }}">
+            {% for v in value %}
+                <option id="option_{{ id_prefix }}_{{ type }}_{{ name }}_{{ loop.counter }}" {% if v == default %}
+                        selected="selected" {% endif %}>{{ v }}</option>
+            {% endfor %}
+        </select>
+        <br>
+    {% endif %}
+    {% if type == 'input' %}
+        <label data-bs-toggle="tooltip" data-bs-placement="right">
+            {{ desc }}
+        </label>
+        <input type="text" class="form-control form-control-user" id="{{ id_prefix }}_{{ type }}_{{ name }}"
+               name="{{ type }}_{{ name }}" placeholder="{{ value }}" value="{{ default }}"/>
+        <br>
+    {% endif %}
+{% endmacro %}

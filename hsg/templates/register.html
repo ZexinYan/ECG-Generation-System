@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Dataflow - Login</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="{{ url_for('static', filename='/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ url_for('static', filename='/vendor/font.css') }}" rel="stylesheet">
+
+
+    <!-- Custom styles for this template-->
+    <link href="{{ url_for('static', filename='/css/sb-admin-2.min.css') }}" rel="stylesheet">
+
+</head>
+
+<body class="bg-gradient-primary">
+
+    <div class="container">
+
+        <!-- Outer Row -->
+        <div class="row justify-content-center">
+
+            <div class="col-xl-10 col-lg-12 col-md-9">
+
+                <div class="card o-hidden border-0 shadow-lg my-5">
+                    <div class="card-body p-0">
+                        <!-- Nested Row within Card Body -->
+                        <div class="row">
+                            <div class="col-lg-6 d-none d-lg-block">
+                                <img src="{{ url_for('static', filename='/imgs/logo.png') }}" height="500" width="500" />
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="p-5">
+                                    <div class="text-center">
+                                        <h1 class="h4 text-gray-900 mb-4">Heartbeat Signal System</h1>
+                                    </div>
+                                    <form class="user" method="post" action="/register">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control form-control-user"
+                                                id="email" name="email" placeholder="Enter Email..."/>
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="text" class="form-control form-control-user"
+                                                id="username" name="username" placeholder="Enter username..."
+                                            onchange="remove_illegal_input(this)" />
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="password" class="form-control form-control-user"
+                                                id="password" name="password" placeholder="Enter password...">
+                                        </div>
+                                        {% if emsg %}  <!-- 如果有错误信息 则显示 -->
+                                            <div class="text-center">
+                                                <h6 class="h6 text-danger mb-1">{{ emsg }}</h6>
+                                            </div>
+                                        {% endif %}
+                                        <button type="submit" class="btn btn-success btn-user btn-block">Create</button>
+                                    </form>
+                                    <hr>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="{{ url_for('static', filename='/vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="{{ url_for('static', filename='/vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="{{ url_for('static', filename='/js/sb-admin-2.min.js') }}"></script>
+
+    <script>
+        function remove_illegal_input(e){
+            e.value=e.value.replace(/[^\s\a-\z\A-\Z0-9\u4E00-\u9FA5\-\+\,\(\)\_\.\]\[]/g,'')
+        }
+    </script>
+
+
+</body>
+
+</html>

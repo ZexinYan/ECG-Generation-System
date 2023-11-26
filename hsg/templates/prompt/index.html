@@ -1,0 +1,235 @@
+{% extends '_base.html' %}
+{% from '_macro.html' import badge %}
+
+{% block css_block %}
+<link rel="stylesheet" href="{{ url_for('static', filename='/vendor/bootstrap-select.min.css') }}">
+<link href="{{ url_for('static', filename='/vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='/vendor/datatables/searchPanes.dataTables.min.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='/vendor/datatables/select.dataTables.min.css') }}" rel="stylesheet">
+
+{% endblock css_block %}
+
+{% block content_block %}
+<main>
+    <header class="page-header page-header-compact page-header-light border-bottom bg-white mb-4">
+        <div class="container-xxxl px-4">
+            <div class="page-header-content">
+                <div class="row align-items-center justify-content-between pt-3">
+                    <div class="col-auto mb-3">
+                        <h1 class="page-header-title">
+                            Prompt Sequence Management
+                        </h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Main page content-->
+    <div class="container-xxxl px-4 mt-4">
+
+        <!-- Payment methods card-->
+        <div class="card shadow mb-4">
+            <div class="card-header  py-3  d-flex flex-row align-items-center justify-content-between">
+                <ul class="nav nav-pills card-header-pills" id="cardPill" role="tablist">
+                </ul>
+                <div class="dropdown no-arrow">
+                    <button class="btn btn-sm btn-outline-primary dropdown-toggle" role="button" id="dropdownMenuLink"
+                            aria-haspopup="true" aria-expanded="false">
+                        Operators
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                         aria-labelledby="dropdownMenuLink">
+                        <div class="dropdown-header">操作:</div>
+                        <a class="dropdown-item"
+                           data-bs-toggle="modal" data-bs-target="#createExpModal">
+                            <i class="fas fa-file-upload mr-2 text-gray-400"></i>
+                            Upload Prompt Sequence
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock content_block %}
+
+
+{% block modal_block %}
+<div class="modal fade" id="createExpModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel">Upload Prompt Sequence</h5>
+            </div>
+            <div class="modal-body">
+                <div class="container-xxxl px-4">
+                    <div class="mb-3">
+                        <label>Comment</label>
+                        <input class="form-control" id="comment">
+                    </div>
+                    <div class="mv-3">
+                        <div class="form-group my-2">
+                            <label id="drop-area" class="area">
+                                <input id="files" name="upload" type="file"/>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline-primary" id="upload_btn">Upload</button>
+                    <button class="btn btn-outline-secondary" type="button" data-bs-dismiss="modal" id="cancel_btn">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock modal_block %}
+
+{% block page_plugins_block %}
+
+<script src="{{ url_for('static', filename='/vendor/datatables/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='/vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+<script src="{{ url_for('static', filename='/vendor/datatables/dataTables.searchPanes.min.js') }}"></script>
+<script src="{{ url_for('static', filename='/vendor/datatables/dataTables.select.min.js') }}"></script>
+<script src="{{ url_for('static', filename='/vendor/datatables/naturalSort.js') }}"></script>
+<script src="{{ url_for('static', filename='/vendor/bootstrap-select.js') }}"></script>
+<script src="{{ url_for('static', filename='/vendor/spark-md5.min.js') }}"></script>
+
+<script src="{{ url_for('static', filename='/vendor/chart.js') }}"></script>
+<script src="{{ url_for('static', filename='/vendor/color.js') }}"></script>
+<script src="{{ url_for('static', filename='/vendor/easymde.min.js') }}"></script>
+<script src="{{ url_for('static', filename='/vendor/marked.min.js') }}"></script>
+
+<script src="{{ url_for('static', filename='/templates/dataset/uploader.js') }}"></script>
+
+
+{% endblock page_plugins_block %}
+
+{% block custom_js_block %}
+<script>
+    $(document).ready(function () {
+        init_table_config();
+        update_table();
+    });
+
+    function init_table_config() {
+        var groupColumn = 0;
+
+        var table = $('#dataTable').DataTable({
+            order: [[0, "desc"]],
+            columns: [
+                {
+                    title: 'Upload Time',
+                    data: 'upload_time',
+                    width: '20%'
+                },
+                {
+                    data: 'comment', title: 'Description',
+                },
+                {
+                    'title': '操作',
+                    render: function (data, type, row) {
+                        var id = row._id;
+                        return `<a class="btn btn-outline-info btn-xs mx-1 my-1" type="button" href="/prompt/detail/${id}">Detail</a>`;
+                    },
+                    width: '10%'
+                },
+            ],
+            dom: 'Plfrtip',
+            displayLength: 3
+        });
+
+        // Order by the grouping
+        $('#dataTable tbody').on('click', 'tr.group', function (item) {
+            var currentOrder = table.order()[0];
+            var data_name = item.target.firstChild.data;
+            if (currentOrder[0] === groupColumn) {
+                if (table.search() !== data_name) {
+                    table.search(data_name).draw();
+                } else {
+                    table.search('').draw();
+                }
+            }
+        });
+    }
+
+    function update_table() {
+        $.ajax({
+            url: "/prompt/csv",
+            type: 'get',
+            dataType: 'json',
+            success: function (result) {
+                result = result['message']['csv_list']
+                let table = $('#dataTable').dataTable();
+                let oSettings = table.fnSettings();
+                table.fnClearTable(this);
+                for (var i = 0; i < result.length; i++) {
+                    table.oApi._fnAddData(oSettings, result[i]);
+                }
+                oSettings.aiDisplay = oSettings.aiDisplayMaster.slice();
+                table.api().searchPanes.rebuildPane();
+            }
+        })
+    }
+</script>
+
+<script>
+    $('#cancel_btn').click(function (e) {
+        window.location.href = "{{ url_for('prompt.index') }}"
+    })
+
+    $('#upload_btn').click(function (e) {
+        const comment = $('#comment').val()
+        if (comment === "") {
+            swal("Warning", "Comment can't be empty.", "warning")
+            return
+        }
+        var file_input = document.getElementById('files');
+        if (file_input.files.length !== 1) {
+            swal("Warning", "You should upload a file.", "warning")
+            return
+        }
+        var formFile = new FormData();
+        formFile.append('comment', comment);
+        formFile.append('file', file_input.files[0])
+        $.ajax({
+            url: "/prompt/csv",
+            data: formFile,
+            type: 'POST',
+            dataType: 'json',
+            async: false,
+            cache: false,
+            processData: false,
+            contentType: false,
+            success: function (result) {
+                window.location.href = '/prompt/index';
+            },
+            error: function (result) {
+                swal(result.responseText, {
+                    icon: "error",
+                }).then(() => {
+                    remove_disabled();
+                    resolve(false);
+                });
+            }
+        })
+    });
+
+</script>
+
+<script>
+
+</script>
+
+{% endblock custom_js_block %}

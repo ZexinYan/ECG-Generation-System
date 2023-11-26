@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="HSG">
+
+    <title>Heartbeat Signal System</title>
+
+    {% block pre_css_block %}
+    {% endblock pre_css_block %}
+    <link href="{{ url_for('static', filename='/vendor/styles.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='/css/sb-admin-2.css') }}" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='/imgs/logo.png') }}"/>
+    <script data-search-pseudo-elements defer src="{{ url_for('static', filename='/vendor/all.min.js') }}"
+            crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='/vendor/feather.min.js') }}"
+            crossorigin="anonymous"></script>
+    <style>
+        .btn-width{
+            width: 150px;
+        }
+        .dropdown:not(.bootstrap-select):hover .dropdown-menu:not(.bootstrap-select)   {
+            display: block;
+            margin-top: 0;
+        }
+    </style>
+    {% block css_block %}
+    {% endblock css_block %}
+
+</head>
+<body class="nav-fixed {% if 'preview' in request.endpoint or 'image_compare' in request.endpoint %} sidenav-toggled {% endif %}">
+<nav class="topnav navbar navbar-expand shadow justify-content-between justify-content-sm-start navbar-light bg-white"
+     id="sidenavAccordion">
+    <!-- Sidenav Toggle Button-->
+    <button class="btn btn-icon btn-transparent-dark order-1 order-lg-0 me-2 ms-lg-2 me-lg-0" id="sidebarToggle">
+        <i class="fa fa-bars"></i>
+    </button>
+    <!-- Navbar Brand-->
+    <!-- * * Tip * * You can use text or an image for your navbar brand.-->
+    <!-- * * * * * * When using an image, we recommend the SVG format.-->
+    <!-- * * * * * * Dimensions: Maximum height: 32px, maximum width: 240px-->
+    <a class="navbar-brand pe-3 ps-4 ps-lg-2" href="{{ url_for('index') }}">HSG</a>
+    <!-- Navbar Items-->
+    {% if  'image_compare' in request.endpoint %}
+    <div class="fixed-btn">
+        <a class="page-setting-btn" data-bs-toggle="offcanvas" id="open-page-setting" href="#page-setting" title="menu">
+            <i class="fa fa-angle-double-down"></i>
+        </a>
+    </div>
+    {% endif %}
+    <ul class="navbar-nav align-items-center ms-auto">
+        <li class="nav-item dropdown no-caret dropdown-user me-3 me-lg-4">
+            <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownUserImage"
+               href="javascript:void(0);"
+               role="button"  aria-haspopup="true" aria-expanded="false">
+                <img class="img-fluid" src="{{ url_for('static', filename='/imgs/avatar_sqrt_M.png') }}"/>
+            </a>
+            <div class="dropdown-menu dropdown-menu-end border-0 shadow"
+                 aria-labelledby="navbarDropdownUserImage">
+                <h6 class="dropdown-header d-flex align-items-center">
+                    <img class="dropdown-user-img" src="{{ url_for('static', filename='/imgs/avatar_sqrt_M.png') }}"/>
+                    <div class="dropdown-user-details">
+                        <div class="dropdown-user-details-name">{{ username }}</div>
+                        <div class="dropdown-user-details-email">{{ email }}</div>
+                    </div>
+                </h6>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                    <div class="dropdown-item-icon"><i class="fas fa-sign-out-alt"></i></div>
+                    logout
+                </a>
+            </div>
+        </li>
+    </ul>
+</nav>
+<div id="layoutSidenav">
+    <div id="layoutSidenav_nav">
+        <nav class="sidenav shadow-right sidenav-light">
+            <div class="sidenav-menu">
+                <div class="nav accordion" id="accordionSidenav">
+                    <!-- Sidenav Menu Heading (Core)-->
+                    <div class="sidenav-menu-heading">Abstract</div>
+                    <a class="nav-link {% if request.endpoint == 'prompt.index' %} active {% endif %}"
+                       href="{{ url_for('prompt.index') }}" aria-expanded="false">
+                        <div class="nav-link-icon"><i data-feather="activity"></i></div>
+                        Prompt Sequences
+                    </a>
+                </div>
+            </div>
+            <!-- Sidenav Footer-->
+            <div class="sidenav-footer">
+                <div class="sidenav-footer-content">
+                    <div class="sidenav-footer-subtitle">Developed by:</div>
+                    <div class="sidenav-footer-title">HSG@CMU</div>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <div id="layoutSidenav_content">
+        {% block content_block %}
+        {% endblock content_block %}
+        <footer class="footer-admin mt-auto footer-light">
+            <div class="container-xxxl px-4">
+                <div class="row">
+                    <div class="col"><span class="small">Copyright &copy; HSG@CMU 2023</span></div>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+<!-- Logout Modal-->
+<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Do you want to log out?</h5>
+                <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">No</button>
+                <a class="btn btn-danger" href="/logout">Yes</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block modal_block %}
+{% endblock modal_block %}
+
+{% block pre_page_plugins_block %}
+{% endblock pre_page_plugins_block %}
+
+<!-- Bootstrap core JavaScript-->
+<script src="{{ url_for('static', filename='/vendor/jquery/jquery.min.js') }}"></script>
+
+<script src="{{ url_for('static', filename='/vendor/scripts.js') }}"></script>
+
+<script src="{{ url_for('static', filename='/vendor/js/bootstrap.bundle.min.js') }}"
+        crossorigin="anonymous"></script>
+<script src="{{ url_for('static', filename='/vendor/prime/prism-core.min.js') }}"></script>
+<script src="{{ url_for('static', filename='/vendor/prime/prism-autoloader.min.js') }}"></script>
+{#https://sweetalert.js.org/guides/#advanced-examples#}
+<script src="{{ url_for('static', filename='/vendor/sweetalert.min.js') }}"></script>
+
+<!-- common function -->
+<script>
+    $.get_url_param = function(name){
+        var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if (r!=null) return unescape(r[2]); return null;
+    }
+    function remove_illegal_input(e){
+        e.value=e.value.replace(/[^\s\a-\z\A-\Z0-9\u4E00-\u9FA5\-\+\,\(\)\_\.\]\[]/g,'')
+    }
+    function encode_image_url(image_url){
+        let host_len = image_url.indexOf('static_folder/') + 'static_folder/'.length
+        let path = encodeURIComponent(image_url.substring(host_len))
+        let host = image_url.substring(0, host_len)
+        return host + path
+    }
+    function remove_disabled(){
+        $('input').removeAttr('disabled')
+        $('button').removeAttr('disabled')
+        $('select').removeAttr('disabled').selectpicker('refresh')
+    }
+    function add_disabled(){
+        $('input').attr('disabled', true)
+        $('button').attr('disabled', true)
+        $('select').attr('disabled', true).selectpicker('refresh')
+    }
+    function init_pie_chart(chart_id, label_num_map){
+        let label_color_map = {{ (label_color_map if label_color_map else '{}') |tojson }}
+        let keys = Object.keys(label_num_map)
+        keys.forEach(key=>{
+            if(label_num_map[key] === 0) {
+              delete label_num_map[key];
+            }
+        })
+        new Chart(document.getElementById(chart_id), {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(label_num_map),
+                datasets: [{
+                    data: Object.values(label_num_map),
+                    backgroundColor: label_color_map
+                }],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                tooltips: {
+                    backgroundColor: "rgb(255,255,255)",
+                    bodyFontColor: "#858796",
+                    borderColor: '#dddfeb',
+                    borderWidth: 1,
+                    xPadding: 15,
+                    yPadding: 15,
+                    displayColors: false,
+                    caretPadding: 10,
+                },
+                legend: {
+                    display: false
+                },
+                cutoutPercentage: 80,
+            },
+        });
+    }
+    function cache_last_next_image(is_origin, quality, type) {
+        let cache_image_list = []
+        if (CurrentIndex > 0){
+            cache_image_list.push(ImageList[CurrentIndex - 1])
+        }
+        if (CurrentIndex < ImageList.length - 1){
+            cache_image_list.push(ImageList[CurrentIndex + 1])
+        }
+        var cache_image = function(index) {
+            if (index < cache_image_list.length) {
+                let image = cache_image_list[index] 
+                let url = `${encode_image_url(image.static_image_url)}?type=${type}&is_origin=${is_origin}&quality=${quality}`
+                fabric.Image.fromURL(url, function(img) {
+                    // 避免当前图片没加载完就加载下一张
+                    cache_image(index + 1);
+                });
+            }
+        };
+        cache_image(0);
+    }
+    
+</script>
+{% block page_plugins_block %}
+{% endblock page_plugins_block %}
+
+{% block custom_js_block %}
+{% endblock custom_js_block %}
+
+<script>
+    function get_workspace_id(){
+        let workspace_id = '{{ workspace_id }}'
+        if (workspace_id){
+            return workspace_id
+        }
+    }
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+
+        $.ajax({
+            url: '/setting/api/v2/workspace?hidden=0',
+            type: 'get',
+            dataType: 'json',
+            success: function (result) {
+                let workspace_list = ''
+                result.forEach(function(value, index) {
+                    workspace_list += `
+                        <a class="nav-link ${get_workspace_id() == value.ID ? 'active' : ''} "
+                            href="/dataset?workspace_id=${value.ID}" aria-expanded="false">
+                                ${value.name}
+                        </a>`
+                $('#workspace-list').html(workspace_list)
+                })
+            }
+        })
+    });
+    
+</script>
+</body>
+
+</html>

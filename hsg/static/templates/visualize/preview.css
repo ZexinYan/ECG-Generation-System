@@ -1,0 +1,83 @@
+.button-comment{
+    line-height: 0;
+}
+.form-check{
+    overflow-y: auto; 
+    overflow-x: hidden
+}
+.comment-list{
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.comment-submit{
+    margin-top: 4%;
+}
+small{
+    display: block;
+}
+.comment_username{
+    margin: 0;
+}
+.list-group-item{
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+hr{
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+.image-type-color{
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background-color: #33cd5f;
+}
+
+.list-group-item-action {
+    width: 100%;
+    color: #6e707e;
+    text-align: inherit;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-left: 0.4rem;
+    padding-right: 0.3rem;
+    padding-top: 0.4rem;
+}
+
+.list-group-item-action:hover {
+    white-space: normal;
+    z-index: 1;
+    background: #C4E1FF;
+    font-weight: bold;
+    text-decoration: none;
+    color: black;
+}
+
+.list-group-item-action:focus {
+    background-color: #84C1FF;
+    color: black;
+    font-weight: bold;
+}
+
+.list-group-item-action:active {
+    color: black;
+    background: #C4E1FF;
+}
+
+.active-image {
+    background: #84C1FF;
+    font-weight: bold;
+    color: black;
+    white-space: normal;
+}
+
+.image-name-list {
+    overflow-y: auto;
+}
+
+.image-no {
+    width: 1rem;
+    font-size: 0.1rem;
+    display: inline-block;
+}
